@@ -15,16 +15,18 @@ SAMPLE_DIR = "assets"
 
 st.title("Thumbnail Generator with Multiprocessing")
 
-for folder in [PRODUCER_DIR, CONSUMER_DIR]:
-    if os.path.exists(folder):
-        shutil.rmtree(folder)
-    os.makedirs(folder)
+def reset_folders():
+    for folder in [PRODUCER_DIR, CONSUMER_DIR]:
+        if os.path.exists(folder):
+            shutil.rmtree(folder)
+        os.makedirs(folder)
 
 tab1, tab2 = st.tabs(["Upload Images", "Use Sample Images"])
 
 with tab1:
     uploaded_files = st.file_uploader("Upload images", type=["jpg", "png"], accept_multiple_files=True)
     if uploaded_files:
+        reset_folders()
         for file in uploaded_files:
             with open(os.path.join(PRODUCER_DIR, file.name), "wb") as f:
                 f.write(file.getbuffer())
@@ -48,6 +50,7 @@ with tab2:
         selected = st.multiselect("Select sample images to process", sample_images)
 
         if selected:
+            reset_folders()
             for img in selected:
                 shutil.copy2(os.path.join(SAMPLE_DIR, img), PRODUCER_DIR)
             st.success(f"{len(selected)} sample image(s) selected!")
